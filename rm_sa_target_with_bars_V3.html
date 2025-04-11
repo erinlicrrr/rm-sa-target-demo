@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>RM/SA 目标构成</title>
+    <style>
+        .bar {
+            transition: width 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .color-block {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 3px;
+        }
+
+        .green-block {
+            background-color: #48bb78;
+        }
+
+        .yellow-block {
+            background-color: #f6e05e;
+        }
+
+        .orange-block {
+            background-color: #ed8936;
+        }
+
+        .red-block {
+            background-color: #f56565;
+        }
+
+        .purple-block {
+            background-color: #9f7aea;
+        }
+
+        .blue-block {
+            background-color: #63b3ed;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 4px;
+            display: inline-block;
+        }
+
+        .message-text {
+            color: red;
+            font-style: italic;
+        }
+
+        #comparisonSection {
+            display: none;
+        }
+
+        /* 调整标题字体大小 */
+        .smaller-title {
+            font-size: 1.25rem;
+        }
+
+        /* 调整对比板块字体大小 */
+        .comparison-section-smaller {
+            font-size: 0.875rem;
+        }
+
+        /* 目标名称字体调整 */
+        .target-name {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        /* 上升箭头样式 */
+        .up-arrow {
+            color: red;
+        }
+
+        /* 下降箭头样式 */
+        .down-arrow {
+            color: green;
+        }
+
+        /* 移动端样式优化 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .flex {
+                flex-direction: column;
+            }
+
+            .w-1/2 {
+                width: 100%;
+                padding: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-8">
+        <h1 class="text-2xl font-bold text-center text-blue-600 mb-8 smaller-title">RM/SA 目标构成</h1>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 smaller-title">RM & SA 的季度总目标 = 净增目标（静态） + 应续目标（动态）</h2>
+            <div class="bg-gray-200 p-4 rounded-md mb-4">
+                <h3 class="text-lg font-bold text-gray-800 mb-1 smaller-title">净增目标</h3>
+                <p class="text-gray-700" id="netIncreaseTarget">当前净增目标: 20万</p>
+                <div class="bg-gray-300 h-6 rounded-md overflow-hidden">
+                    <div id="netIncreaseBar" class="bg-green-500 h-full bar" style="width: calc(20 / 620 * 100%);"></div>
+                </div>
+            </div>
+            <div class="bg-blue-100 p-4 rounded-md relative">
+                <h3 class="text-lg font-bold text-gray-800 mb-1 smaller-title">初始应续目标</h3>
+                <div class="flex justify-end absolute top-4 right-4 text-xs text-gray-500">
+                    <div class="flex items-center mr-4">
+                        <span class="color-block yellow-block"></span>
+                        <span>已到期业绩对应目标</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="color-block orange-block"></span>
+                        <span>名下客户即将到期业绩对应目标</span>
+                    </div>
+                </div>
+                <p class="text-gray-700" id="initialRenewalTotalTarget">初始总应续目标: <span class="highlight">600万</span></p>
+                <div class="bg-gray-300 h-6 rounded-md overflow-hidden">
+                    <div id="initialExistingRenewalBarPart" class="bg-yellow-500 h-full bar" style="width: calc(100 / 600 * 100%); float: left;"></div>
+                    <div id="initialUpcomingRenewalBarPart" class="bg-orange-500 h-full bar" style="width: calc(500 / 600 * 100%); float: left;"></div>
+                    <div style="clear: both;"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-700 mt-2">
+                    <p>a) 已到期业绩 <span id="initialExistingTargetValue" class="highlight">100万</span></p>
+                    <p>b) 即将到期业绩 <span id="initialUpcomingTargetValue" class="highlight">500万</span></p>
+                </div>
+            </div>
+            <div class="bg-blue-100 p-4 rounded-md relative mt-4">
+                <h3 class="text-lg font-bold text-gray-800 mb-1 smaller-title">当前应续目标</h3>
+                <p class="text-gray-700" id="renewalTotalTarget">当前总应续目标: <span class="highlight">600万</span></p>
+                <div class="bg-gray-300 h-6 rounded-md overflow-hidden">
+                    <div id="existingRenewalBarPart" class="bg-yellow-500 h-full bar" style="float: left;"></div>
+                    <div id="upcomingRenewalBarPart" class="bg-orange-500 h-full bar" style="float: left;"></div>
+                    <div style="clear: both;"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-700 mt-2">
+                    <p>a) 已到期业绩 <span id="existingTargetValue" class="highlight">100万</span></p>
+                    <p>b) 即将到期业绩 <span id="upcomingTargetValue" class="highlight">500万</span></p>
+                </div>
+                <div class="mt-4">
+                    <button id="customerRenewalButton"
+                        class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">客户如期续约</button>
+                    <button id="ownerTransferButton"
+                        class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 ml-4">客户owner转移</button>
+                    <button id="negativePerformanceButton"
+                        class="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 ml-4">负向业绩调整</button>
+                    <button id="resetButton"
+                        class="bg-white text-blue-600 border border-blue-600 py-2 px-4 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ml-4">恢复初始状态</button>
+                </div>
+                <div id="messageArea" class="mt-4 text-gray-700"></div>
+            </div>
+            <div id="comparisonSection" class="bg-white p-6 rounded-lg shadow-md mt-4 comparison-section-smaller">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 smaller-title">目标构成对比</h2>
+                <div class="flex justify-between">
+                    <div class="w-1/2 pr-4">
+                        <h3 class="target-name">初始已到期业绩</h3>
+                        <p class="text-gray-700" id="comparisonInitialExistingRenewalTarget">初始目标: 100万</p>
+                        <div class="bg-gray-200 h-6 rounded-md overflow-hidden">
+                            <div id="comparisonInitialExistingRenewalBar" class="bg-yellow-500 h-full bar" style="width: calc(100 / 600 * 100%);"></div>
+                        </div>
+                        <p id="existingTargetChange" class="text-gray-700"></p>
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <h3 class="target-name">当前已到期业绩</h3>
+                        <p class="text-gray-700" id="comparisonExistingRenewalTarget">当前目标: 100万</p>
+                        <div class="bg-gray-200 h-6 rounded-md overflow-hidden">
+                            <div id="comparisonExistingRenewalBar" class="bg-yellow-500 h-full bar" style="width: calc(100 / 600 * 100%);"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-4">
+                    <div class="w-1/2 pr-4">
+                        <h3 class="target-name">初始名下客户即将到期业绩</h3>
+                        <p class="text-gray-700" id="comparisonInitialUpcomingRenewalTarget">初始目标: 500万</p>
+                        <div class="bg-gray-200 h-6 rounded-md overflow-hidden">
+                            <div id="comparisonInitialUpcomingRenewalBar" class="bg-orange-500 h-full bar" style="width: calc(500 / 600 * 100%);"></div>
+                        </div>
+                        <p id="upcomingTargetChange" class="text-gray-700"></p>
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <h3 class="target-name">当前名下客户即将到期业绩</h3>
+                        <p class="text-gray-700" id="comparisonUpcomingRenewalTarget">当前目标: 500万</p>
+                        <div class="bg-gray-200 h-6 rounded-md overflow-hidden">
+                            <div id="comparisonUpcomingRenewalBar" class="bg-orange-500 h-full bar" style="width: calc(500 / 600 * 100%);"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-gray-700">总应续目标变化: <span id="totalTargetChange"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const existingRenewalTarget = document.getElementById('comparisonExistingRenewalTarget');
+        const upcomingRenewalTarget = document.getElementById('comparisonUpcomingRenewalTarget');
+        const existingRenewalBar = document.getElementById('comparisonExistingRenewalBar');
+        const upcomingRenewalBar = document.getElementById('comparisonUpcomingRenewalBar');
+        const existingRenewalBarPart = document.getElementById('existingRenewalBarPart');
+        const upcomingRenewalBarPart = document.getElementById('upcomingRenewalBarPart');
+        const netIncreaseBar = document.getElementById('netIncreaseBar');
+        const renewalTotalTarget = document.getElementById('renewalTotalTarget');
+        const existingTargetValue = document.getElementById('existingTargetValue');
+        const upcomingTargetValue = document.getElementById('upcomingTargetValue');
+        const customerRenewalButton = document.getElementById('customerRenewalButton');
+        const ownerTransferButton = document.getElementById('ownerTransferButton');
+        const negativePerformanceButton = document.getElementById('negativePerformanceButton');
+        const messageArea = document.getElementById('messageArea');
+        const comparisonSection = document.getElementById('comparisonSection');
+        const resetButton = document.getElementById('resetButton');
+        const existingTargetChange = document.getElementById('existingTargetChange');
+        const upcomingTargetChange = document.getElementById('upcomingTargetChange');
+        const totalTargetChange = document.getElementById('totalTargetChange');
+
+        const initialExistingTarget = 100;
+        const initialUpcomingTarget = 500;
+        const initialTotalTarget = 600;
+        const netIncrease = 20;
+
+        function resetValues() {
+            let existingTarget = initialExistingTarget;
+            let upcomingTarget = initialUpcomingTarget;
+            let totalTarget = initialTotalTarget;
+
+            existingRenewalTarget.textContent = `当前目标: ${existingTarget}万`;
+            upcomingRenewalTarget.textContent = `当前目标: ${upcomingTarget}万`;
+            renewalTotalTarget.innerHTML = `当前总应续目标: <span class="highlight">${totalTarget}万</span>`;
+            existingTargetValue.innerHTML = `<span class="highlight">${existingTarget}万</span>`;
+            upcomingTargetValue.innerHTML = `<span class="highlight">${upcomingTarget}万</span>`;
+
+            existingRenewalBar.style.width = `${(existingTarget / totalTarget) * 100}%`;
+            upcomingRenewalBar.style.width = `${(upcomingTarget / totalTarget) * 100}%`;
+            existingRenewalBarPart.style.width = `${(existingTarget / totalTarget) * 100}%`;
+            upcomingRenewalBarPart.style.width = `${(upcomingTarget / totalTarget) * 100}%`;
+
+            existingTargetChange.textContent = '';
+            upcomingTargetChange.textContent = '';
+            totalTargetChange.textContent = '';
+
+            return { existingTarget, upcomingTarget, totalTarget };
+        }
+
+        function updateUI(existingTarget, upcomingTarget, totalTarget) {
+            existingRenewalTarget.textContent = `当前目标: ${existingTarget}万`;
+            upcomingRenewalTarget.textContent = `当前目标: ${upcomingTarget}万`;
+            renewalTotalTarget.innerHTML = `当前总应续目标: <span class="highlight">${totalTarget}万</span>`;
+            existingTargetValue.innerHTML = `<span class="highlight">${existingTarget}万</span>`;
+            upcomingTargetValue.innerHTML = `<span class="highlight">${upcomingTarget}万</span>`;
+
+            const newTotal = netIncrease + totalTarget;
+            netIncreaseBar.style.width = `${(netIncrease / newTotal) * 100}%`;
+
+            const existingWidth = (existingTarget / initialTotalTarget) * (totalTarget / initialTotalTarget) * 100;
+            const upcomingWidth = (upcomingTarget / initialTotalTarget) * (totalTarget / initialTotalTarget) * 100;
+
+            existingRenewalBar.style.width = `${(existingTarget / totalTarget) * 100}%`;
+            upcomingRenewalBar.style.width = `${(upcomingTarget / totalTarget) * 100}%`;
+            existingRenewalBarPart.style.width = `${existingWidth}%`;
+            upcomingRenewalBarPart.style.width = `${upcomingWidth}%`;
+
+            existingRenewalTarget.classList.add('fade-in');
+            upcomingRenewalTarget.classList.add('fade-in');
+            existingRenewalBar.classList.add('fade-in');
+            upcomingRenewalBar.classList.add('fade-in');
+            existingRenewalBarPart.classList.add('fade-in');
+            upcomingRenewalBarPart.classList.add('fade-in');
+
+            setTimeout(() => {
+                existingRenewalTarget.classList.remove('fade-in');
+                upcomingRenewalTarget.classList.remove('fade-in');
+                existingRenewalBar.classList.remove('fade-in');
+                upcomingRenewalBar.classList.remove('fade-in');
+                existingRenewalBarPart.classList.remove('fade-in');
+                upcomingRenewalBarPart.classList.remove('fade-in');
+            }, 500);
+
+            document.getElementById('comparisonInitialExistingRenewalTarget').textContent = `初始目标: ${initialExistingTarget}万`;
+            document.getElementById('comparisonInitialUpcomingRenewalTarget').textContent = `初始目标: ${initialUpcomingTarget}万`;
+            document.getElementById('comparisonExistingRenewalTarget').textContent = `当前目标: ${existingTarget}万`;
+            document.getElementById('comparisonUpcomingRenewalTarget').textContent = `当前目标: ${upcomingTarget}万`;
+
+            document.getElementById('comparisonInitialExistingRenewalBar').style.width = `${(initialExistingTarget / initialTotalTarget) * 100}%`;
+            document.getElementById('comparisonInitialUpcomingRenewalBar').style.width = `${(initialUpcomingTarget / initialTotalTarget) * 100}%`;
+            document.getElementById('comparisonExistingRenewalBar').style.width = `${(existingTarget / totalTarget) * 100}%`;
+            document.getElementById('comparisonUpcomingRenewalBar').style.width = `${(upcomingTarget / totalTarget) * 100}%`;
+
+            // 计算并显示指标变化
+            const existingChange = existingTarget - initialExistingTarget;
+            const upcomingChange = upcomingTarget - initialUpcomingTarget;
+            const totalChange = totalTarget - initialTotalTarget;
+
+            if (existingChange > 0) {
+                existingTargetChange.innerHTML = `<span class="up-arrow">↑${existingChange}万</span>`;
+            } else if (existingChange < 0) {
+                existingTargetChange.innerHTML = `<span class="down-arrow">↓${Math.abs(existingChange)}万</span>`;
+            } else {
+                existingTargetChange.textContent = '';
+            }
+
+            if (upcomingChange > 0) {
+                upcomingTargetChange.innerHTML = `<span class="up-arrow">↑${upcomingChange}万</span>`;
+            } else if (upcomingChange < 0) {
+                upcomingTargetChange.innerHTML = `<span class="down-arrow">↓${Math.abs(upcomingChange)}万</span>`;
+            } else {
+                upcomingTargetChange.textContent = '';
+            }
+
+            if (totalChange > 0) {
+                totalTargetChange.innerHTML = `<span class="up-arrow">↑${totalChange}万</span>`;
+            } else if (totalChange < 0) {
+                totalTargetChange.innerHTML = `<span class="down-arrow">↓${Math.abs(totalChange)}万</span>`;
+            } else {
+                totalTargetChange.textContent = '维持不变';
+            }
+
+            comparisonSection.style.display = 'block';
+        }
+
+        customerRenewalButton.addEventListener('click', () => {
+            const { existingTarget, upcomingTarget, totalTarget } = resetValues();
+            messageArea.innerHTML = '<span class="message-text">客户如期续约20万</span>';
+            updateUI(existingTarget + 20, upcomingTarget - 20, totalTarget);
+        });
+
+        ownerTransferButton.addEventListener('click', () => {
+            const { existingTarget, upcomingTarget, totalTarget } = resetValues();
+            messageArea.innerHTML = '<span class="message-text">客户owner转移后，该客户续约20万</span>';
+            updateUI(existingTarget, upcomingTarget - 20, totalTarget - 20);
+        });
+
+        negativePerformanceButton.addEventListener('click', () => {
+            const { existingTarget, upcomingTarget, totalTarget } = resetValues();
+            messageArea.innerHTML = '<span class="message-text">拆走已产生的负向业绩-40万</span>';
+            updateUI(existingTarget - 40, upcomingTarget, totalTarget - 40);
+        });
+
+        resetButton.addEventListener('click', () => {
+            const { existingTarget, upcomingTarget, totalTarget } = resetValues();
+            messageArea.innerHTML = '';
+            comparisonSection.style.display = 'none';
+            updateUI(existingTarget, upcomingTarget, totalTarget);
+        });
+    </script>
+</body>
+
+</html>    
